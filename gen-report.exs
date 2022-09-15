@@ -384,7 +384,7 @@ end
 defmodule Main do
   @tools [Ferox, DepCheck, Gitleaks, Semgrep]
 
-  @header_text "## ?? Cabueta's Report"
+  @header_text "## 🪬 Cabueta's Report"
 
   @goal_text "This workflow's goal is to look for vulnerabilities in the source
   code and in the running web application, and then display it's findings."
@@ -512,5 +512,5 @@ reports =
   |> Enum.map(&Main.read_report(&1))
   |> Main.assemble()
 
-Main.store_report(reports)
+#Main.store_report(reports)
 IO.puts(reports.markdown)
