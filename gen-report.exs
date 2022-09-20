@@ -515,7 +515,7 @@ defmodule Main do
         File.close(file)
 
       {:error, _err} ->
-        _
+        {}
     end
   end
 end
