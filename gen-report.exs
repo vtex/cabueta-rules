@@ -526,5 +526,5 @@ reports =
   |> Enum.map(&Main.read_report(&1))
   |> Main.assemble()
 
-Main.store_report(reports)
+#Main.store_report(reports)
 IO.puts(reports.markdown)
