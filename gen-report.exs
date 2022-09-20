@@ -82,12 +82,12 @@ defmodule Semgrep do
   end
 
   def group_reports(reports) do
-    report_key = fn x -> {x.severity, x.check_id, x.message} end
-    report_value = fn x -> {x.path, x.line} end
+    report_key = fn x -> %{severity: x.severity, id: x.check_id, message: x.message} end
+    report_value = fn x -> %{path: x.path, line: x.line} end
 
     reports
     |> Enum.group_by(report_key, report_value)
-    |> Enum.map(fn {k, v} -> {length(v), k, v} end)
+    |> Enum.map(fn {k, v} -> %{freq: length(v), meta: k, data: v} end)
     |> Enum.sort()
     |> Enum.reverse()
   end
@@ -107,7 +107,7 @@ defmodule Semgrep do
 
     lines =
       list
-      |> Enum.map(fn {path, line} ->
+      |> Enum.map(fn %{path: path, line: line} ->
         ~s(#{sep1}- #{Markdown.file_reflink(path, line)})
       end)
 
@@ -118,13 +118,19 @@ defmodule Semgrep do
   def to_markdown(reports) do
     critical =
       reports
-      |> Enum.filter(fn {_freq, {severity, _id, _message}, _findings} -> severity == "ERROR" end)
+      |> Enum.filter(fn %{freq: _freq, meta: %{severity: severity}, data: _findings} ->
+        severity == "ERROR"
+      end)
 
     warnings =
       reports
-      |> Enum.filter(fn {_freq, {severity, _id, _message}, _findings} -> severity != "ERROR" end)
+      |> Enum.filter(fn %{freq: _freq, meta: %{severity: severity}, data: _findings} ->
+        severity != "ERROR"
+      end)
 
-    call_render = fn {_freq, {_, _, msg}, findings} -> render_list(msg, findings) end
+    call_render = fn %{freq: _freq, meta: %{message: msg}, data: findings} ->
+      render_list(msg, findings)
+    end
 
     header = ":heavy_exclamation_mark: Critical Findings"
     critical_list = critical |> Enum.map(&call_render.(&1))
@@ -156,6 +162,8 @@ defmodule Semgrep do
     |> read_reports()
     |> filter_ignored()
     |> group_reports()
+
+    # |> dbg()
   end
 
   @impl Tool
@@ -477,7 +485,13 @@ defmodule Main do
       get_md.(reports, [:feroxbuster, :markdown])
     ]
 
-    %{markdown: pieces |> Enum.join("\n"), reports: reports}
+    %{
+      markdown: pieces |> Enum.join("\n"),
+      reports: reports,
+      repository: System.get_env("GITHUB_REPOSITORY", ""),
+      time: DateTime.utc_now() |> Calendar.strftime("%Y-%m-%d-%H-%M-%S"),
+      url: repo_url()
+    }
   end
 
   def serialize_report(report) do
@@ -512,5 +526,5 @@ reports =
   |> Enum.map(&Main.read_report(&1))
   |> Main.assemble()
 
-#Main.store_report(reports)
+Main.store_report(reports)
 IO.puts(reports.markdown)
