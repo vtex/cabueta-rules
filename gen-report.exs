@@ -499,18 +499,24 @@ defmodule Main do
 
   def report_id() do
     repo = System.get_env("GITHUB_REPOSITORY", "") |> String.replace("\/", "#")
-    branch = System.get_env("GITHUB_REF", "main")
+    branch = System.get_env("GITHUB_REF", "main") |> String.replace("\/", "#")
     time = DateTime.utc_now() |> Calendar.strftime("%Y-%m-%d-%H-%M-%S")
 
+    "#{repo}@#{branch}@#{time}-cabueta-report-v0.json"
     "#{repo}@#{branch}@#{time}-cabueta-report-v0.json"
   end
 
   def store_report(report) do
     data = report |> Map.delete(:markdown) |> Jason.encode!()
 
-    file = Main.report_id() |> File.open!([:write])
-    IO.binwrite(file, data)
-    File.close(file)
+    case Main.report_id() |> File.open([:write]) do
+      {:ok, file} ->
+        IO.binwrite(file, data)
+        File.close(file)
+
+      {:error, _err} ->
+        _
+    end
   end
 end
 
@@ -526,5 +532,5 @@ reports =
   |> Enum.map(&Main.read_report(&1))
   |> Main.assemble()
 
-#Main.store_report(reports)
+# Main.store_report(reports)
 IO.puts(reports.markdown)
