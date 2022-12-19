@@ -2,7 +2,7 @@ defmodule Ferox do
   @behaviour Tool
 
   def read_reports(reports) do
-    reports |> Main.read_json_files()
+    reports |> Main.read_json_file()
   end
 
   def group_endpoints(%{json: endpoints}) do

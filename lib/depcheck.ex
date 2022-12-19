@@ -2,7 +2,7 @@ defmodule DepCheck do
   @behaviour Tool
 
   def read_reports(reports) do
-    reports |> Main.read_json_files()
+    reports |> Main.read_json_file()
   end
 
   def format_report(%{json: report}) do
