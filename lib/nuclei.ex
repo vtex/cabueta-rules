@@ -28,7 +28,7 @@ defmodule Nuclei do
     |> then(fn %{json: data} -> Enum.map(data, &read_finding/1) end)
     |> Enum.sort_by(& &1["severity"])
     |> Enum.uniq()
-    |> dbg
+    #|> dbg
   end
 
   def test_report() do

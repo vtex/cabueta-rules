@@ -50,7 +50,6 @@ defmodule Ferox do
   def process_report(reports) do
     reports
     |> Main.read_json_file()
-    |> hd
     |> group_endpoints()
   end
 

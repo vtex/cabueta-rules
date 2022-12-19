@@ -82,7 +82,7 @@ end
 
 defmodule Main do
   @tools [Semgrep, DepCheck, Gitleaks, Nuclei]
-  #@tools [Semgrep, DepCheck, Gitleaks, Semgrep, Nuclei]
+  # @tools [Semgrep, DepCheck, Gitleaks, Semgrep, Nuclei]
 
   @header_text "## 🪬 Cabueta's Report"
 
@@ -109,10 +109,11 @@ defmodule Main do
   def test_tools() do
     reports =
       Enum.map(@tools, fn tool ->
+        Logger.info("Testing #{tool}")
         tool.test_report()
       end)
       |> List.flatten()
-      |> dbg
+      #|> dbg
       |> Enum.map(&read_report(&1))
       |> Enum.filter(&(!is_nil(&1)))
       |> assemble
