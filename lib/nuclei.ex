@@ -7,7 +7,20 @@ defmodule Nuclei do
 
   def to_markdown(findings) do
     n = length(findings)
-    body = findings |> Enum.map(fn x -> "#{@severity[x.severity]} #{x.name}" end)
+
+    body =
+      findings
+      |> Enum.map(fn x ->
+        title = "#{@severity[x.severity]} #{x.name}"
+
+        if Map.has_key?(x, :description) do
+          Markdown.list(title, [x.description])
+        else
+          "- #{title}"
+        end
+      end)
+      |> Enum.join("\n")
+      |> dbg
 
     Markdown.toggle_stats("Web Application Active Scan", n, body)
   end
@@ -28,7 +41,8 @@ defmodule Nuclei do
     |> then(fn %{json: data} -> Enum.map(data, &read_finding/1) end)
     |> Enum.sort_by(& &1["severity"])
     |> Enum.uniq()
-    #|> dbg
+
+    # |> dbg
   end
 
   def test_report() do
