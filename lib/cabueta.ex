@@ -81,8 +81,7 @@ defmodule Markdown do
 end
 
 defmodule Main do
-  @tools [Semgrep, DepCheck, Gitleaks, Nuclei]
-  # @tools [Semgrep, DepCheck, Gitleaks, Semgrep, Nuclei]
+  @tools [Semgrep, DepCheck, Gitleaks, Semgrep, Nuclei]
 
   @header_text "## 🪬 Cabueta's Report"
 
