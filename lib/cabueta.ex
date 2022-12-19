@@ -140,8 +140,9 @@ defmodule Main do
         String.contains?(file, "semgrep") ->
           Semgrep
 
-        String.contains?(file, "feroxbuster") ->
-          Ferox
+        
+        # String.contains?(file, "feroxbuster") ->
+        #   Ferox
 
         String.contains?(file, "dependency-check") ->
           DepCheck
