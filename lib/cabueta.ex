@@ -81,7 +81,7 @@ defmodule Markdown do
 end
 
 defmodule Main do
-  @tools [Semgrep, DepCheck, Gitleaks, Semgrep, Nuclei]
+  @tools [Semgrep, DepCheck, Gitleaks, Semgrep, Nuclei, OsvScanner]
 
   @header_text "## 🪬 Cabueta's Report"
 
@@ -112,7 +112,7 @@ defmodule Main do
         tool.test_report()
       end)
       |> List.flatten()
-      #|> dbg
+      # |> dbg
       |> Enum.map(&read_report(&1))
       |> Enum.filter(&(!is_nil(&1)))
       |> assemble
@@ -140,10 +140,10 @@ defmodule Main do
         String.contains?(file, "semgrep") ->
           Semgrep
 
-        
         # String.contains?(file, "feroxbuster") ->
         #   Ferox
 
+        # Remove this later
         String.contains?(file, "dependency-check") ->
           DepCheck
 
@@ -152,6 +152,9 @@ defmodule Main do
 
         String.contains?(file, "nuclei") ->
           Nuclei
+
+        String.contains?(file, "osv-scan") ->
+          OsvScanner
 
         true ->
           nil
