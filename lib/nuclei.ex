@@ -16,7 +16,7 @@ defmodule Nuclei do
         if Map.has_key?(x, :description) do
           Markdown.list(title, [x.description])
         else
-          "- #{title}"
+          "- #{title}\n"
         end
       end)
       |> Enum.join("\n")
