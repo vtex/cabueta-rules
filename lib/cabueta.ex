@@ -131,7 +131,19 @@ defmodule Main do
     end
 
     Logger.info("Decoding #{file}")
-    %{path: file, json: safe_read.(file) |> Jason.decode!()}
+
+    %{
+      path: file,
+      json:
+        safe_read.(file)
+        |> Jason.decode()
+        |> then(fn x ->
+          case x do
+            {:ok, data} -> data
+            _err -> nil
+          end
+        end)
+    }
   end
 
   def get_module(file) do
@@ -194,6 +206,7 @@ defmodule Main do
       "> " <> @goal_text,
       @sast_text,
       get_md.(reports, [:dependency_check, :markdown]),
+      get_md.(reports, [:osv_scanner, :markdown]),
       get_md.(reports, [:gitleaks, :markdown]),
       get_md.(reports, [:semgrep, :markdown]),
       "\n> " <> @dast_text,

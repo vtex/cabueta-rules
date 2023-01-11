@@ -1,6 +1,10 @@
 defmodule OsvScanner do
   @behaviour Tool
 
+  def to_markdown(nil) do
+    ""
+  end
+
   def to_markdown(reports) do
     title = fn x ->
       p = x["package"]
@@ -23,11 +27,26 @@ defmodule OsvScanner do
 
   def process_report(data) do
     data
+    # here
     |> Main.read_json_file()
     |> Map.get(:json)
-    |> Map.get("results")
-    |> hd
-    |> Map.get("packages")
+    |> then(fn x ->
+      if is_nil(x) do
+        nil
+      else
+        x
+        |> Map.get("results")
+        |> then(fn x ->
+          case x do
+            x when is_list(x) ->
+              x |> hd |> Map.get("packages")
+
+            _any ->
+              nil
+          end
+        end)
+      end
+    end)
   end
 
   def test_report() do
