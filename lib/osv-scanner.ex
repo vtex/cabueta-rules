@@ -38,7 +38,7 @@ defmodule OsvScanner do
         |> Map.get("results")
         |> then(fn x ->
           case x do
-            x when is_list(x) ->
+            [_ | _]  ->
               x |> hd |> Map.get("packages")
 
             _any ->
