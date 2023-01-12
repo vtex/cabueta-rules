@@ -6,6 +6,9 @@ defmodule OsvScanner do
   end
 
   def to_markdown(reports) do
+    reports |> dbg()
+    IO.puts("Reading reports so and so")
+
     title = fn x ->
       p = x["package"]
       "`#{p["name"]}:#{p["version"]}` (#{p["ecosystem"]})"
@@ -38,7 +41,7 @@ defmodule OsvScanner do
         |> Map.get("results")
         |> then(fn x ->
           case x do
-            [_ | _]  ->
+            [_ | _] ->
               x |> hd |> Map.get("packages")
 
             _any ->
