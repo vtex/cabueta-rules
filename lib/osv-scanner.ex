@@ -2,18 +2,13 @@ defmodule OsvScanner do
   @behaviour Tool
 
   def to_markdown(nil) do
-    ""
+    "some error here ack"
   end
 
   def to_markdown(reports) do
-    # reports |> dbg()
-    IO.puts(:stderr, "A")
-
     title = fn x ->
-      IO.puts(:stderr, "C")
       p = x["package"]
       "`#{p["name"]}:#{p["version"]}` (#{p["ecosystem"]})"
-      IO.puts(:stderr, "D")
     end
 
     safe_str = fn
@@ -28,14 +23,11 @@ defmodule OsvScanner do
       end) |> Enum.join(", ")}` #{x["summary"]}; #{x["details"]}"
     end
 
-    IO.puts(:stderr, "B")
-
     details =
       reports
       |> Enum.filter(fn r ->
         Map.has_key?(r, "vulnerabilities") && length(r["vulnerabilities"]) > 0
       end)
-      # |> dbg()
       |> Enum.map(fn report ->
         Markdown.list(title.(report), Map.get(report, "vulnerabilities") |> Enum.map(body))
       end)
