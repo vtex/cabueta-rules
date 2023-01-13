@@ -203,12 +203,10 @@ defmodule Main do
       @header_text,
       "> " <> @goal_text,
       @sast_text,
-      get_md.(reports, [:dependency_check, :markdown]),
       get_md.(reports, [:osv_scanner, :markdown]),
       get_md.(reports, [:gitleaks, :markdown]),
       get_md.(reports, [:semgrep, :markdown]),
       "\n> " <> @dast_text,
-      get_md.(reports, [:feroxbuster, :markdown]),
       get_md.(reports, [:nuclei, :markdown])
     ]
 

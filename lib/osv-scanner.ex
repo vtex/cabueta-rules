@@ -2,7 +2,7 @@ defmodule OsvScanner do
   @behaviour Tool
 
   def to_markdown(nil) do
-    "some error here ack"
+    Markdown.toggle_stats("Vulnerable Dependencies", 0, "") 
   end
 
   def to_markdown(reports) do
