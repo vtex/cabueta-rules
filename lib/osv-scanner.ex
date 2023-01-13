@@ -33,7 +33,7 @@ defmodule OsvScanner do
       end)
       |> Enum.join("\n")
 
-    Markdown.toggle_stats("Vulnerable Dependencies", length(reports), details) |> IO.puts()
+    Markdown.toggle_stats("Vulnerable Dependencies", length(reports), details) 
   end
 
   def process_report(data) do
@@ -55,7 +55,10 @@ defmodule OsvScanner do
           nil ->
             nil
 
-          x ->
+          [] ->
+            nil
+
+          %{} ->
             x |> Map.get("packages")
         end)
     end)
