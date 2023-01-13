@@ -137,11 +137,9 @@ defmodule Main do
       json:
         safe_read.(file)
         |> Jason.decode()
-        |> then(fn x ->
-          case x do
-            {:ok, data} -> data
-            _err -> nil
-          end
+        |> then(fn
+          {:ok, data} -> data
+          _err -> nil
         end)
     }
   end
