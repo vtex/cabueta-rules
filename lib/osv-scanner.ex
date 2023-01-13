@@ -6,17 +6,36 @@ defmodule OsvScanner do
   end
 
   def to_markdown(reports) do
+    # reports |> dbg()
+    IO.puts(:stderr, "A")
+
     title = fn x ->
+      IO.puts(:stderr, "C")
       p = x["package"]
       "`#{p["name"]}:#{p["version"]}` (#{p["ecosystem"]})"
+      IO.puts(:stderr, "D")
+    end
+
+    safe_str = fn
+      nil -> ""
+      x -> x
     end
 
     body = fn x ->
-      "[#{x["database_specific"]["severity"]}] `#{x["aliases"] |> Enum.join(", ")}` #{x["summary"]}; #{x["details"]}"
+      "[#{x["database_specific"]["severity"] |> then(safe_str)}] `#{x["aliases"] |> then(fn
+        x when is_atom(x) -> [""]
+        x -> x
+      end) |> Enum.join(", ")}` #{x["summary"]}; #{x["details"]}"
     end
+
+    IO.puts(:stderr, "B")
 
     details =
       reports
+      |> Enum.filter(fn r ->
+        Map.has_key?(r, "vulnerabilities") && length(r["vulnerabilities"]) > 0
+      end)
+      # |> dbg()
       |> Enum.map(fn report ->
         Markdown.list(title.(report), Map.get(report, "vulnerabilities") |> Enum.map(body))
       end)
@@ -30,22 +49,23 @@ defmodule OsvScanner do
     # here
     |> Main.read_json_file()
     |> Map.get(:json)
-    |> then(fn x ->
-      if is_nil(x) do
+    |> then(fn
+      nil ->
         nil
-      else
+
+      x ->
         x
         |> Map.get("results")
-        |> then(fn x ->
-          case x do
-            [_ | _]  ->
-              x |> hd |> Map.get("packages")
+        |> then(fn
+          [_ | _] = list ->
+            list |> hd |> Map.get("packages")
 
-            _any ->
-              nil
-          end
+          nil ->
+            nil
+
+          x ->
+            x |> Map.get("packages")
         end)
-      end
     end)
   end
 
